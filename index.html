@@ -12,8 +12,9 @@
     .form input { flex: 1; padding: 8px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; }
     .form button { padding: 8px 16px; font-size: 1rem; cursor: pointer; }
     ul { list-style: none; padding: 0; }
-    li { padding: 8px 0; border-bottom: 1px solid #eee; }
+    li { padding: 8px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
     .empty { color: #888; font-style: italic; }
+    .delete-btn { background: none; border: none; color: #c00; cursor: pointer; font-size: 1rem; padding: 0 4px; }
   </style>
 </head>
 <body>
@@ -49,7 +50,10 @@
         list.innerHTML = '<li class="empty">No tasks yet</li>';
         return;
       }
-      list.innerHTML = tasks.map(t => `<li>${escapeHtml(t.title)}</li>`).join('');
+      list.innerHTML = tasks.map(t => `<li><span>${escapeHtml(t.title)}</span><button class="delete-btn" data-id="${t.id}">✕</button></li>`).join('');
+      list.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteTask(btn.dataset.id));
+      });
     }
 
     function escapeHtml(str) {
@@ -61,8 +65,14 @@
     function addTask() {
       const title = input.value.trim();
       if (!title) return;
-      tasks.push({ id: Date.now() + Math.random(), title });
+      tasks.push({ id: String(Date.now()) + String(Math.random()).slice(2), title });
       input.value = '';
+      save();
+      render();
+    }
+
+    function deleteTask(id) {
+      tasks = tasks.filter(t => t.id !== id);
       save();
       render();
     }

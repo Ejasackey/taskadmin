@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-A single-page task manager using **vanilla HTML, CSS, and JavaScript**. No frameworks, no backend, no external dependencies. All data lives in memory.
+A single-page task manager using **vanilla HTML, CSS, and JavaScript**. No frameworks, no backend, no external dependencies. All data lives in local storage.
 
 ## 2. Data Model
 
@@ -33,9 +33,9 @@ A single self-contained file. No build step, no server required.
 +------------------------------------------+
 |  [________________________] [Add Task]   |
 +------------------------------------------+
-|  • Buy groceries                          |
-|  • Write report                           |
-|  • Call dentist                           |
+|  • Buy groceries                    [✕]  |
+|  • Write report                     [✕]  |
+|  • Call dentist                     [✕]  |
 +------------------------------------------+
 ```
 
@@ -53,7 +53,11 @@ A single self-contained file. No build step, no server required.
 
 ### List
 - On page load, render all tasks from the in-memory array
-- Each task is displayed as a `<li>` with its title
+- Each task is displayed as a `<li>` with its title and a delete button
+
+### Delete
+- Each task row has a delete button (✕)
+- Clicking it removes the task from the array, persists to localStorage, and re-renders the list
 
 ## 6. Acceptance Criteria
 
@@ -61,3 +65,4 @@ A single self-contained file. No build step, no server required.
 |---|----------|-------|------|------|
 | 1 | Create a new task | Page is loaded | User types a title and clicks Add or presses Enter | Task appears in the list below |
 | 2 | List all tasks | Multiple tasks exist in memory | User views the page | All tasks are displayed as list items |
+| 3 | Delete a task | A task exists in the list | User clicks the delete button on that task | The task is removed from the list |
