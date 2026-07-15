@@ -27,9 +27,22 @@
   <script>
     let tasks = [];
 
+    const STORAGE_KEY = 'taskmanager_tasks';
+
     const input = document.getElementById('taskInput');
     const addBtn = document.getElementById('addBtn');
     const list = document.getElementById('taskList');
+
+    function save() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    }
+
+    function load() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      if (data) {
+        try { tasks = JSON.parse(data); } catch { tasks = []; }
+      }
+    }
 
     function render() {
       if (tasks.length === 0) {
@@ -50,6 +63,7 @@
       if (!title) return;
       tasks.push({ id: Date.now() + Math.random(), title });
       input.value = '';
+      save();
       render();
     }
 
@@ -58,6 +72,7 @@
     });
     addBtn.addEventListener('click', addTask);
 
+    load();
     render();
   </script>
 </body>
