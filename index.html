@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; max-width: 480px; margin: 40px auto; padding: 0 16px; }
+    h1 { font-size: 1.5rem; margin-bottom: 16px; }
+    .form { display: flex; gap: 8px; margin-bottom: 16px; }
+    .form input { flex: 1; padding: 8px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+    .form button { padding: 8px 16px; font-size: 1rem; cursor: pointer; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 8px 0; border-bottom: 1px solid #eee; }
+    .empty { color: #888; font-style: italic; }
+  </style>
+</head>
+<body>
+  <h1>Task Manager</h1>
+  <div class="form">
+    <input type="text" id="taskInput" placeholder="Enter a task..." maxlength="200">
+    <button id="addBtn">Add Task</button>
+  </div>
+  <ul id="taskList"></ul>
+
+  <script>
+    let tasks = [];
+
+    const input = document.getElementById('taskInput');
+    const addBtn = document.getElementById('addBtn');
+    const list = document.getElementById('taskList');
+
+    function render() {
+      if (tasks.length === 0) {
+        list.innerHTML = '<li class="empty">No tasks yet</li>';
+        return;
+      }
+      list.innerHTML = tasks.map(t => `<li>${escapeHtml(t.title)}</li>`).join('');
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function addTask() {
+      const title = input.value.trim();
+      if (!title) return;
+      tasks.push({ id: Date.now() + Math.random(), title });
+      input.value = '';
+      render();
+    }
+
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') addTask();
+    });
+    addBtn.addEventListener('click', addTask);
+
+    render();
+  </script>
+</body>
+</html>
