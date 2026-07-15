@@ -72,7 +72,7 @@
     }
 
     function deleteTask(id) {
-      tasks = tasks.filter(t => t.id !== id);
+      tasks = tasks.filter(t => String(t.id) !== id);
       save();
       render();
     }
