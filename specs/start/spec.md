@@ -31,16 +31,16 @@ A single self-contained file. No build step, no server required.
 +------------------------------------------+
 |  Task Manager                             |
 +------------------------------------------+
-|  [________________________] [Add Task]   |
+|  [________________________] [Add] [Cancel]|
 +------------------------------------------+
-|  • Buy groceries                    [✕]  |
-|  • Write report                     [✕]  |
-|  • Call dentist                     [✕]  |
+|  • Buy groceries              [✎] [✕]   |
+|  • Write report               [✎] [✕]   |
+|  • Call dentist               [✎] [✕]   |
 +------------------------------------------+
 ```
 
 - A heading "Task Manager"
-- A text input + "Add Task" button
+- A text input + "Add Task" button (Cancel button visible only during editing)
 - An unordered list (`<ul>`) of tasks below
 - Empty state: show "No tasks yet" when list is empty
 
@@ -55,6 +55,13 @@ A single self-contained file. No build step, no server required.
 - On page load, render all tasks from the in-memory array
 - Each task is displayed as a `<li>` with its title and a delete button
 
+### Edit
+- Each task row has an edit button (✎)
+- Clicking it loads the task title into the input and changes the button to "Update Task"
+- Submitting updates the task in the array, persists to localStorage, and re-renders
+- A Cancel button appears during editing; clicking it or pressing Escape cancels the edit
+- If the edited task is deleted by another user action during editing, the edit is cancelled
+
 ### Delete
 - Each task row has a delete button (✕)
 - Clicking it removes the task from the array, persists to localStorage, and re-renders the list
@@ -65,4 +72,5 @@ A single self-contained file. No build step, no server required.
 |---|----------|-------|------|------|
 | 1 | Create a new task | Page is loaded | User types a title and clicks Add or presses Enter | Task appears in the list below |
 | 2 | List all tasks | Multiple tasks exist in memory | User views the page | All tasks are displayed as list items |
-| 3 | Delete a task | A task exists in the list | User clicks the delete button on that task | The task is removed from the list |
+| 3 | Edit a task | A task exists in the list | User clicks the edit button on that task, modifies the title, and submits | The task title is updated in the list |
+| 4 | Delete a task | A task exists in the list | User clicks the delete button on that task | The task is removed from the list |

@@ -1,6 +1,6 @@
 Feature: Task Management
   As a user
-  I want to create, list, and delete tasks
+  I want to create, list, edit, and delete tasks
   So that I can keep track of my work
 
   Scenario: Create a new task
@@ -20,6 +20,15 @@ Feature: Task Management
     And I should see "Buy groceries"
     And I should see "Write report"
     And I should see "Call dentist"
+
+  Scenario: Edit a task
+    Given I have the following tasks:
+      | title          |
+      | Buy groceries  |
+      | Write report   |
+    When I edit the task "Buy groceries" to "Buy groceries and milk"
+    Then I should see "Buy groceries and milk"
+    And I should not see "Buy groceries" (as an unedited entry)
 
   Scenario: Delete a task
     Given I have the following tasks:

@@ -14,7 +14,12 @@
     ul { list-style: none; padding: 0; }
     li { padding: 8px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
     .empty { color: #888; font-style: italic; }
-    .delete-btn { background: none; border: none; color: #c00; cursor: pointer; font-size: 1rem; padding: 0 4px; }
+    .btn-group { display: flex; gap: 4px; }
+    .edit-btn, .delete-btn, .cancel-btn { background: none; border: none; cursor: pointer; font-size: 1rem; padding: 0 4px; }
+    .edit-btn { color: #06c; }
+    .delete-btn { color: #c00; }
+    .cancel-btn { color: #888; }
+    .cancel-btn.show { display: inline; }
   </style>
 </head>
 <body>
@@ -22,6 +27,7 @@
   <div class="form">
     <input type="text" id="taskInput" placeholder="Enter a task..." maxlength="200">
     <button id="addBtn">Add Task</button>
+    <button id="cancelBtn" class="cancel-btn" style="display:none">Cancel</button>
   </div>
   <ul id="taskList"></ul>
 
@@ -32,7 +38,9 @@
 
     const input = document.getElementById('taskInput');
     const addBtn = document.getElementById('addBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
     const list = document.getElementById('taskList');
+    let editingId = null;
 
     function save() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
@@ -50,7 +58,10 @@
         list.innerHTML = '<li class="empty">No tasks yet</li>';
         return;
       }
-      list.innerHTML = tasks.map(t => `<li><span>${escapeHtml(t.title)}</span><button class="delete-btn" data-id="${t.id}">✕</button></li>`).join('');
+      list.innerHTML = tasks.map(t => `<li><span>${escapeHtml(t.title)}</span><div class="btn-group"><button class="edit-btn" data-id="${t.id}">✎</button><button class="delete-btn" data-id="${t.id}">✕</button></div></li>`).join('');
+      list.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => editTask(btn.dataset.id));
+      });
       list.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', () => deleteTask(btn.dataset.id));
       });
@@ -65,22 +76,50 @@
     function addTask() {
       const title = input.value.trim();
       if (!title) return;
-      tasks.push({ id: String(Date.now()) + String(Math.random()).slice(2), title });
+      if (editingId) {
+        const idx = tasks.findIndex(t => String(t.id) === editingId);
+        if (idx !== -1) tasks[idx].title = title;
+        editingId = null;
+        addBtn.textContent = 'Add Task';
+        cancelBtn.style.display = 'none';
+      } else {
+        tasks.push({ id: String(Date.now()) + String(Math.random()).slice(2), title });
+      }
       input.value = '';
       save();
       render();
     }
 
+    function editTask(id) {
+      const task = tasks.find(t => String(t.id) === id);
+      if (!task) return;
+      input.value = task.title;
+      addBtn.textContent = 'Update Task';
+      cancelBtn.style.display = 'inline';
+      editingId = id;
+      input.focus();
+    }
+
+    function cancelEdit() {
+      input.value = '';
+      addBtn.textContent = 'Add Task';
+      cancelBtn.style.display = 'none';
+      editingId = null;
+    }
+
     function deleteTask(id) {
       tasks = tasks.filter(t => String(t.id) !== id);
+      if (editingId === id) cancelEdit();
       save();
       render();
     }
 
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter') addTask();
+      if (e.key === 'Escape') cancelEdit();
     });
     addBtn.addEventListener('click', addTask);
+    cancelBtn.addEventListener('click', cancelEdit);
 
     load();
     render();
