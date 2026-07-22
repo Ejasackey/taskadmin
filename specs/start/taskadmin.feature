@@ -14,35 +14,47 @@ Feature: Task Management
     And I submit the task form
     Then I should see "Buy groceries" in the task list
 
-  Scenario: Create a task with dates
+  Scenario: Create a task with a description
     Given I am on the task management page
     When I enter a task title "Buy groceries"
+    And I enter a description "Milk, eggs, and bread"
+    And I submit the task form
+    Then I should see "Buy groceries" in the task list
+    And I should see "Milk, eggs, and bread" below the title
+
+  Scenario: Create a task with a description and dates
+    Given I am on the task management page
+    When I enter a task title "Buy groceries"
+    And I enter a description "Milk, eggs, and bread"
     And I set the start date to "2026-07-17"
     And I set the due date to "2026-07-20"
     And I submit the task form
     Then I should see "Buy groceries" in the task list
+    And I should see "Milk, eggs, and bread" below the title
     And I should see "Start: 2026-07-17"
     And I should see "Due: 2026-07-20"
 
   Scenario: List all tasks
     Given I have the following tasks:
-      | title          | startDate  | dueDate    |
-      | Buy groceries  | 2026-07-17 | 2026-07-20 |
-      | Write report   |            | 2026-08-01 |
-      | Call dentist   |            |            |
+      | title          | description       | startDate  | dueDate    |
+      | Buy groceries  | Milk, eggs, bread | 2026-07-17 | 2026-07-20 |
+      | Write report   |                   |            | 2026-08-01 |
+      | Call dentist   |                   |            |            |
     When I view the task list
     Then I should see 3 tasks
     And I should see "Buy groceries"
+    And I should see "Milk, eggs, bread"
     And I should see "Write report"
     And I should see "Call dentist"
 
   Scenario: Edit a task
     Given I have the following tasks:
-      | title          | startDate  | dueDate    |
-      | Buy groceries  | 2026-07-17 | 2026-07-20 |
-      | Write report   |            |            |
-    When I edit the task "Buy groceries" to "Buy groceries and milk" with start date "2026-07-18" and due date "2026-07-21"
+      | title          | description       | startDate  | dueDate    |
+      | Buy groceries  | Milk, eggs, bread | 2026-07-17 | 2026-07-20 |
+      | Write report   |                   |            |            |
+    When I edit the task "Buy groceries" to "Buy groceries and milk" with description "Milk, eggs, bread, and butter" and start date "2026-07-18" and due date "2026-07-21"
     Then I should see "Buy groceries and milk"
+    And I should see "Milk, eggs, bread, and butter"
     And I should see "Start: 2026-07-18"
     And I should see "Due: 2026-07-21"
     And I should not see "Buy groceries" (as an unedited entry)

@@ -17,22 +17,33 @@ test.describe('Task Management', () => {
     await expect(page.locator('.list-group-item')).toContainText('Buy groceries');
   });
 
-  test('Create a task with dates', async ({ page }) => {
+  test('Create a task with a description', async ({ page }) => {
     await page.goto('/');
     await page.fill('#taskInput', 'Buy groceries');
+    await page.fill('#taskDescription', 'Milk, eggs, and bread');
+    await page.click('#addBtn');
+    await expect(page.locator('.list-group-item')).toContainText('Buy groceries');
+    await expect(page.locator('.list-group-item')).toContainText('Milk, eggs, and bread');
+  });
+
+  test('Create a task with a description and dates', async ({ page }) => {
+    await page.goto('/');
+    await page.fill('#taskInput', 'Buy groceries');
+    await page.fill('#taskDescription', 'Milk, eggs, and bread');
     await page.fill('#startDate', '2026-07-17');
     await page.fill('#dueDate', '2026-07-20');
     await page.click('#addBtn');
     await expect(page.locator('.list-group-item')).toContainText('Buy groceries');
+    await expect(page.locator('.list-group-item')).toContainText('Milk, eggs, and bread');
     await expect(page.locator('.list-group-item')).toContainText('Start: 2026-07-17');
     await expect(page.locator('.list-group-item')).toContainText('Due: 2026-07-20');
   });
 
   test('List all tasks', async ({ page }) => {
     const tasks = [
-      { title: 'Buy groceries', startDate: '2026-07-17', dueDate: '2026-07-20' },
-      { title: 'Write report', startDate: '', dueDate: '2026-08-01' },
-      { title: 'Call dentist', startDate: '', dueDate: '' },
+      { title: 'Buy groceries', description: 'Milk, eggs, bread', startDate: '2026-07-17', dueDate: '2026-07-20' },
+      { title: 'Write report', description: '', startDate: '', dueDate: '2026-08-01' },
+      { title: 'Call dentist', description: '', startDate: '', dueDate: '' },
     ];
     await page.goto('/');
     await page.evaluate((tasks) => {
@@ -44,14 +55,15 @@ test.describe('Task Management', () => {
     const allItems = page.locator('.list-group-item');
     await expect(allItems).toHaveCount(3);
     await expect(page.locator('#taskList')).toContainText('Buy groceries');
+    await expect(page.locator('#taskList')).toContainText('Milk, eggs, bread');
     await expect(page.locator('#taskList')).toContainText('Write report');
     await expect(page.locator('#taskList')).toContainText('Call dentist');
   });
 
   test('Edit a task', async ({ page }) => {
     const tasks = [
-      { id: '1', title: 'Buy groceries', startDate: '2026-07-17', dueDate: '2026-07-20' },
-      { id: '2', title: 'Write report', startDate: '', dueDate: '' },
+      { id: '1', title: 'Buy groceries', description: 'Milk, eggs, bread', startDate: '2026-07-17', dueDate: '2026-07-20' },
+      { id: '2', title: 'Write report', description: '', startDate: '', dueDate: '' },
     ];
     await page.goto('/');
     await page.evaluate((tasks) => {
@@ -61,11 +73,13 @@ test.describe('Task Management', () => {
 
     await page.click('.edit-btn[data-id="1"]');
     await page.fill('#taskInput', 'Buy groceries and milk');
+    await page.fill('#taskDescription', 'Milk, eggs, bread, and butter');
     await page.fill('#startDate', '2026-07-18');
     await page.fill('#dueDate', '2026-07-21');
     await page.click('#addBtn');
 
     await expect(page.locator('#taskList')).toContainText('Buy groceries and milk');
+    await expect(page.locator('#taskList')).toContainText('Milk, eggs, bread, and butter');
     await expect(page.locator('#taskList')).toContainText('Start: 2026-07-18');
     await expect(page.locator('#taskList')).toContainText('Due: 2026-07-21');
 

@@ -8,6 +8,7 @@
   <style>
     body { background: #f5f7fa; }
     .task-dates { font-size: 0.8rem; color: #888; }
+    .task-description { font-size: 0.85rem; margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -17,6 +18,7 @@
         <h1 class="card-title h3 mb-4">Emmanuel Sackey</h1>
         <div class="mb-4">
           <input type="text" class="form-control mb-2" id="taskInput" placeholder="Enter a task..." maxlength="200">
+          <textarea class="form-control mb-2" id="taskDescription" placeholder="Description (optional)" rows="2" maxlength="500"></textarea>
           <div class="row g-2 align-items-end">
             <div class="col-sm">
               <label for="startDate" class="form-label small text-secondary mb-0">Start</label>
@@ -43,6 +45,7 @@
     const STORAGE_KEY = 'taskmanager_tasks';
 
     const input = document.getElementById('taskInput');
+    const descriptionInput = document.getElementById('taskDescription');
     const startDateInput = document.getElementById('startDate');
     const dueDateInput = document.getElementById('dueDate');
     const addBtn = document.getElementById('addBtn');
@@ -67,11 +70,12 @@
         return;
       }
       list.innerHTML = tasks.map(t => {
+        const descHtml = t.description ? '<div class="task-description small text-muted">' + escapeHtml(t.description) + '</div>' : '';
         const dateParts = [];
         if (t.startDate) dateParts.push('Start: ' + t.startDate);
         if (t.dueDate) dateParts.push('Due: ' + t.dueDate);
         const datesHtml = dateParts.length ? '<span class="task-dates">' + dateParts.join(' | ') + '</span>' : '';
-        return '<li class="list-group-item d-flex justify-content-between align-items-center"><div><span>' + escapeHtml(t.title) + '</span>' + datesHtml + '</div><div class="btn-group btn-group-sm"><button class="btn btn-outline-primary edit-btn" data-id="' + t.id + '">✎</button><button class="btn btn-outline-danger delete-btn" data-id="' + t.id + '">✕</button></div></li>';
+        return '<li class="list-group-item d-flex justify-content-between align-items-center"><div><span>' + escapeHtml(t.title) + '</span>' + descHtml + datesHtml + '</div><div class="btn-group btn-group-sm"><button class="btn btn-outline-primary edit-btn" data-id="' + t.id + '">✎</button><button class="btn btn-outline-danger delete-btn" data-id="' + t.id + '">✕</button></div></li>';
       }).join('');
       list.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', () => editTask(btn.dataset.id));
@@ -90,18 +94,20 @@
     function addTask() {
       const title = input.value.trim();
       if (!title) return;
+      const description = descriptionInput.value.trim();
       const startDate = startDateInput.value;
       const dueDate = dueDateInput.value;
       if (editingId) {
         const idx = tasks.findIndex(t => String(t.id) === editingId);
-        if (idx !== -1) { tasks[idx].title = title; tasks[idx].startDate = startDate; tasks[idx].dueDate = dueDate; }
+        if (idx !== -1) { tasks[idx].title = title; tasks[idx].description = description; tasks[idx].startDate = startDate; tasks[idx].dueDate = dueDate; }
         editingId = null;
         addBtn.textContent = 'Add Task';
         cancelBtn.style.display = 'none';
       } else {
-        tasks.push({ id: String(Date.now()) + String(Math.random()).slice(2), title, startDate, dueDate });
+        tasks.push({ id: String(Date.now()) + String(Math.random()).slice(2), title, description, startDate, dueDate });
       }
       input.value = '';
+      descriptionInput.value = '';
       startDateInput.value = '';
       dueDateInput.value = '';
       save();
@@ -112,6 +118,7 @@
       const task = tasks.find(t => String(t.id) === id);
       if (!task) return;
       input.value = task.title;
+      descriptionInput.value = task.description || '';
       startDateInput.value = task.startDate || '';
       dueDateInput.value = task.dueDate || '';
       addBtn.textContent = 'Update Task';
@@ -122,6 +129,7 @@
 
     function cancelEdit() {
       input.value = '';
+      descriptionInput.value = '';
       startDateInput.value = '';
       dueDateInput.value = '';
       addBtn.textContent = 'Add Task';
