@@ -130,6 +130,7 @@
     }
 
     function deleteTask(id) {
+      if (!confirm('Are you sure you want to delete this task?')) return;
       tasks = tasks.filter(t => String(t.id) !== id);
       if (editingId === id) cancelEdit();
       save();

@@ -47,7 +47,19 @@ Feature: Task Management
       | title          |
       | Buy groceries  |
       | Write report   |
-    When I delete the task "Buy groceries"
+    When I click delete on the task "Buy groceries"
+    And I confirm the deletion
     Then I should see 1 task
     And I should see "Write report"
     And I should not see "Buy groceries"
+
+  Scenario: Cancel delete keeps the task
+    Given I have the following tasks:
+      | title          |
+      | Buy groceries  |
+      | Write report   |
+    When I click delete on the task "Buy groceries"
+    And I cancel the deletion
+    Then I should see 2 tasks
+    And I should see "Buy groceries"
+    And I should see "Write report"

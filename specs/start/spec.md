@@ -72,7 +72,9 @@ A single self-contained file. No build step, no server required.
 
 ### Delete
 - Each task row has a delete button (✕)
-- Clicking it removes the task from the array, persists to localStorage, and re-renders the list
+- Clicking it shows a confirmation dialog ("Are you sure you want to delete this task?")
+- If the user confirms, the task is removed from the array, persisted to localStorage, and the list is re-rendered
+- If the user cancels, the task remains unchanged
 
 ## 6. Acceptance Criteria
 
@@ -82,7 +84,8 @@ A single self-contained file. No build step, no server required.
 | 2 | Create a task with dates | Page is loaded | User types a title, picks start and due dates, and submits | Task appears with dates shown below the title |
 | 3 | List all tasks | Multiple tasks exist in memory | User views the page | All tasks are displayed as list items with their dates |
 | 4 | Edit a task | A task exists in the list | User clicks the edit button, modifies title and/or dates, and submits | The task is updated in the list |
-| 5 | Delete a task | A task exists in the list | User clicks the delete button on that task | The task is removed from the list |
+| 5 | Delete a task | A task exists in the list | User clicks the delete button and confirms | The task is removed from the list |
+| 6 | Cancel delete | A task exists in the list | User clicks the delete button and cancels the dialog | The task remains in the list |
 
 ## 7. End-to-End Testing
 
@@ -101,12 +104,13 @@ A single self-contained file. No build step, no server required.
 | 2 | Create a task with dates | #2 |
 | 3 | List all tasks | #3 |
 | 4 | Edit a task | #4 |
-| 5 | Delete a task | #5 |
+| 5 | Delete a task after confirmation | #5 |
+| 6 | Cancel delete keeps the task | #6 |
 
 ### CI
 
 - **Platform**: GitHub Actions
-- **Workflow**: `.github/workflows/test.yml`
+- **Workflow**: `.github/workflows/ci.yml`
 - **Triggers**: push/PR to `main`
 - **Runner**: `ubuntu-latest`
 - **Server**: Python `http.server` on port 8080

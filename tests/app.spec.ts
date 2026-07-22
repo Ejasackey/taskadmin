@@ -65,7 +65,7 @@ test.describe('Task Management', () => {
     expect(listText).not.toMatch(/^Buy groceries$/m);
   });
 
-  test('Delete a task', async ({ page }) => {
+  test('Delete a task after confirmation', async ({ page }) => {
     const tasks = [
       { id: '1', title: 'Buy groceries', startDate: '', dueDate: '' },
       { id: '2', title: 'Write report', startDate: '', dueDate: '' },
@@ -76,14 +76,34 @@ test.describe('Task Management', () => {
     }, tasks);
     await page.reload();
 
+    page.on('dialog', dialog => dialog.accept());
     await page.click('.delete-btn[data-id="1"]');
 
-    const allItems = page.locator('.list-group-item:not(:has(.edit-btn))');
     const regularItems = page.locator('#taskList .list-group-item');
     await expect(regularItems).toHaveCount(1);
     await expect(page.locator('#taskList')).toContainText('Write report');
     const listText = await page.locator('#taskList').innerText();
     expect(listText).not.toContain('Buy groceries');
+  });
+
+  test('Cancel delete keeps the task', async ({ page }) => {
+    const tasks = [
+      { id: '1', title: 'Buy groceries', startDate: '', dueDate: '' },
+      { id: '2', title: 'Write report', startDate: '', dueDate: '' },
+    ];
+    await page.goto('/');
+    await page.evaluate((tasks) => {
+      localStorage.setItem('taskmanager_tasks', JSON.stringify(tasks));
+    }, tasks);
+    await page.reload();
+
+    page.on('dialog', dialog => dialog.dismiss());
+    await page.click('.delete-btn[data-id="1"]');
+
+    const regularItems = page.locator('#taskList .list-group-item');
+    await expect(regularItems).toHaveCount(2);
+    await expect(page.locator('#taskList')).toContainText('Buy groceries');
+    await expect(page.locator('#taskList')).toContainText('Write report');
   });
 
 });
