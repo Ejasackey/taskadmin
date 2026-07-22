@@ -83,3 +83,30 @@ A single self-contained file. No build step, no server required.
 | 3 | List all tasks | Multiple tasks exist in memory | User views the page | All tasks are displayed as list items with their dates |
 | 4 | Edit a task | A task exists in the list | User clicks the edit button, modifies title and/or dates, and submits | The task is updated in the list |
 | 5 | Delete a task | A task exists in the list | User clicks the delete button on that task | The task is removed from the list |
+
+## 7. End-to-End Testing
+
+- **Framework**: Playwright
+- **Test file**: `tests/app.spec.ts`
+- **Config**: `playwright.config.ts`
+- **Run**: `npm test`
+- **Base URL**: `http://localhost:8080`
+- **Mode**: headless
+
+### Test Coverage
+
+| # | Test | Covers Criterion |
+|---|------|------------------|
+| 1 | Create a new task | #1 |
+| 2 | Create a task with dates | #2 |
+| 3 | List all tasks | #3 |
+| 4 | Edit a task | #4 |
+| 5 | Delete a task | #5 |
+
+### CI
+
+- **Platform**: GitHub Actions
+- **Workflow**: `.github/workflows/test.yml`
+- **Triggers**: push/PR to `main`
+- **Runner**: `ubuntu-latest`
+- **Server**: Python `http.server` on port 8080
