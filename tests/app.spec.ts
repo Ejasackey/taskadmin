@@ -128,4 +128,27 @@ test.describe('Task Management', () => {
     await expect(page.locator('#taskList')).toContainText('Write report');
   });
 
+  test('Task items are draggable', async ({ page }) => {
+    const tasks = [
+      { id: '1', title: 'Buy groceries', startDate: '', dueDate: '' },
+      { id: '2', title: 'Write report', startDate: '', dueDate: '' },
+    ];
+    await page.goto('/');
+    await page.evaluate((tasks) => {
+      localStorage.setItem('taskmanager_tasks', JSON.stringify(tasks));
+    }, tasks);
+    await page.reload();
+
+    const firstItem = page.locator('.task-item').first();
+    await expect(firstItem).toHaveAttribute('draggable', 'true');
+  });
+
+  test('Long task titles are truncated', async ({ page }) => {
+    await page.goto('/');
+    await page.fill('#taskInput', 'This is a very long task title that should be truncated when displayed in the task list');
+    await page.click('#addBtn');
+    const title = page.locator('.task-title');
+    await expect(title).toHaveCSS('text-overflow', 'ellipsis');
+  });
+
 });

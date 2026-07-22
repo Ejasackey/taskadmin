@@ -9,6 +9,10 @@
     body { background: #f5f7fa; }
     .task-dates { font-size: 0.8rem; color: #888; }
     .task-description { font-size: 0.85rem; margin-top: 2px; }
+    .task-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 320px; }
+    .task-item { cursor: grab; }
+    .task-item.dragging { opacity: 0.5; background: #e9ecef; }
+    .task-item.drag-over { border-top: 2px solid #0d6efd; }
   </style>
 </head>
 <body>
@@ -75,13 +79,20 @@
         if (t.startDate) dateParts.push('Start: ' + t.startDate);
         if (t.dueDate) dateParts.push('Due: ' + t.dueDate);
         const datesHtml = dateParts.length ? '<span class="task-dates">' + dateParts.join(' | ') + '</span>' : '';
-        return '<li class="list-group-item d-flex justify-content-between align-items-center"><div><span>' + escapeHtml(t.title) + '</span>' + descHtml + datesHtml + '</div><div class="btn-group btn-group-sm"><button class="btn btn-outline-primary edit-btn" data-id="' + t.id + '">✎</button><button class="btn btn-outline-danger delete-btn" data-id="' + t.id + '">✕</button></div></li>';
+        return '<li class="list-group-item d-flex justify-content-between align-items-center task-item" draggable="true" data-id="' + t.id + '"><div class="overflow-hidden"><span class="task-title">' + escapeHtml(t.title) + '</span>' + descHtml + datesHtml + '</div><div class="btn-group btn-group-sm flex-shrink-0 ms-2"><button class="btn btn-outline-primary edit-btn" data-id="' + t.id + '">✎</button><button class="btn btn-outline-danger delete-btn" data-id="' + t.id + '">✕</button></div></li>';
       }).join('');
       list.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', () => editTask(btn.dataset.id));
       });
       list.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', () => deleteTask(btn.dataset.id));
+      });
+      list.querySelectorAll('.task-item').forEach(item => {
+        item.addEventListener('dragstart', handleDragStart);
+        item.addEventListener('dragend', handleDragEnd);
+        item.addEventListener('dragover', handleDragOver);
+        item.addEventListener('drop', handleDrop);
+        item.addEventListener('dragleave', handleDragLeave);
       });
     }
 
@@ -141,6 +152,43 @@
       if (!confirm('Are you sure you want to delete this task?')) return;
       tasks = tasks.filter(t => String(t.id) !== id);
       if (editingId === id) cancelEdit();
+      save();
+      render();
+    }
+
+    let draggedId = null;
+
+    function handleDragStart(e) {
+      draggedId = this.dataset.id;
+      this.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragEnd(e) {
+      this.classList.remove('dragging');
+      list.querySelectorAll('.task-item').forEach(item => item.classList.remove('drag-over'));
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      this.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+      this.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      this.classList.remove('drag-over');
+      const targetId = this.dataset.id;
+      if (draggedId === targetId) return;
+      const fromIdx = tasks.findIndex(t => String(t.id) === draggedId);
+      const toIdx = tasks.findIndex(t => String(t.id) === targetId);
+      if (fromIdx === -1 || toIdx === -1) return;
+      const [moved] = tasks.splice(fromIdx, 1);
+      tasks.splice(toIdx, 0, moved);
       save();
       render();
     }
