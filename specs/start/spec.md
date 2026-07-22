@@ -46,7 +46,7 @@ A single self-contained file. No build step, no server required.
 
 - A heading "Task Manager"
 - A text input for the task title
-- Start date and due date inputs (date pickers)
+- Start date and due date inputs (date pickers), both defaulting to today's date
 - "Add Task" button (Cancel button visible only during editing)
 - An unordered list (`<ul>`) of tasks below, with optional date info shown below each title
 - Empty state: show "No tasks yet" when list is empty
@@ -80,12 +80,13 @@ A single self-contained file. No build step, no server required.
 
 | # | Scenario | Given | When | Then |
 |---|----------|-------|------|------|
-| 1 | Create a new task | Page is loaded | User types a title and clicks Add or presses Enter | Task appears in the list below |
-| 2 | Create a task with dates | Page is loaded | User types a title, picks start and due dates, and submits | Task appears with dates shown below the title |
-| 3 | List all tasks | Multiple tasks exist in memory | User views the page | All tasks are displayed as list items with their dates |
-| 4 | Edit a task | A task exists in the list | User clicks the edit button, modifies title and/or dates, and submits | The task is updated in the list |
-| 5 | Delete a task | A task exists in the list | User clicks the delete button and confirms | The task is removed from the list |
-| 6 | Cancel delete | A task exists in the list | User clicks the delete button and cancels the dialog | The task remains in the list |
+| 1 | Date inputs default to today | Page is loaded | User views the date inputs | Both start and due date inputs show today's date |
+| 2 | Create a new task | Page is loaded | User types a title and clicks Add or presses Enter | Task appears in the list below |
+| 3 | Create a task with dates | Page is loaded | User types a title, picks start and due dates, and submits | Task appears with dates shown below the title |
+| 4 | List all tasks | Multiple tasks exist in memory | User views the page | All tasks are displayed as list items with their dates |
+| 5 | Edit a task | A task exists in the list | User clicks the edit button, modifies title and/or dates, and submits | The task is updated in the list |
+| 6 | Delete a task | A task exists in the list | User clicks the delete button and confirms | The task is removed from the list |
+| 7 | Cancel delete | A task exists in the list | User clicks the delete button and cancels the dialog | The task remains in the list |
 
 ## 7. End-to-End Testing
 
@@ -100,12 +101,13 @@ A single self-contained file. No build step, no server required.
 
 | # | Test | Covers Criterion |
 |---|------|------------------|
-| 1 | Create a new task | #1 |
-| 2 | Create a task with dates | #2 |
-| 3 | List all tasks | #3 |
-| 4 | Edit a task | #4 |
-| 5 | Delete a task after confirmation | #5 |
-| 6 | Cancel delete keeps the task | #6 |
+| 1 | Date inputs default to today | #1 |
+| 2 | Create a new task | #2 |
+| 3 | Create a task with dates | #3 |
+| 4 | List all tasks | #4 |
+| 5 | Edit a task | #5 |
+| 6 | Delete a task after confirmation | #6 |
+| 7 | Cancel delete keeps the task | #7 |
 
 ### CI
 

@@ -144,8 +144,14 @@
     addBtn.addEventListener('click', addTask);
     cancelBtn.addEventListener('click', cancelEdit);
 
+    function today() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
     load();
     render();
+    startDateInput.value = today();
+    dueDateInput.value = today();
   </script>
 </body>
 </html>

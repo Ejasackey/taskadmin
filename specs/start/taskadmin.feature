@@ -3,6 +3,11 @@ Feature: Task Management
   I want to create, list, edit, and delete tasks
   So that I can keep track of my work
 
+  Scenario: Date inputs default to today
+    Given I am on the task management page
+    Then the start date should be today
+    And the due date should be today
+
   Scenario: Create a new task
     Given I am on the task management page
     When I enter a task title "Buy groceries"

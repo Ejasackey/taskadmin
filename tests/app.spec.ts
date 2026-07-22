@@ -1,6 +1,14 @@
 import { test, expect } from '@playwright/test';
 
+const today = () => new Date().toISOString().slice(0, 10);
+
 test.describe('Task Management', () => {
+
+  test('Date inputs default to today', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('#startDate')).toHaveValue(today());
+    await expect(page.locator('#dueDate')).toHaveValue(today());
+  });
 
   test('Create a new task', async ({ page }) => {
     await page.goto('/');
